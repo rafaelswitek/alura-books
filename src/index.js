@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import Home from './rotas/Home';
 import reportWebVitals from './reportWebVitals';
 import { createGlobalStyle } from 'styled-components'
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Header from './componentes/Header';
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Header from './componentes/Header'
 import Favoritos from './rotas/Favoritos';
 
 const GlobalStyle = createGlobalStyle`
@@ -26,10 +26,6 @@ const GlobalStyle = createGlobalStyle`
     list-style: none;    
   }
 
-  a {
-    text-decoration: none;
-    color: unset;
-  }
 
 `
 
@@ -38,10 +34,10 @@ root.render(
   <React.StrictMode>
     <GlobalStyle />
     <BrowserRouter>
-    <Header />
+      <Header />
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/favoritos' element={<Favoritos />} />
+        <Route path="/favoritos" element={<Favoritos/>} />
+        <Route path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

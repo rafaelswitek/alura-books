@@ -1,20 +1,19 @@
+import { useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components'
-import { useEffect, useState } from 'react'
+import { deleteFavorito, getFavoritos } from '../servicos/favoritos';
 import livroImg from '../imagens/livro.png'
-import { deleteFavorito, getFavoritos } from '../servico/favoritos'
 
-const FavoritosContainer = styled.div`
+const AppContainer = styled.div`
     width: 100vw;
     height: 100vh;
     background-image: linear-gradient(90deg,#002F52 35%,#326589 165%);
 `
 
-const Titulo = styled.h2`
-    color: #FFF;
-    font-size: 36px;
-    text-align: center;
-    width: 100%;
-    padding-top: 35px
+const ResultadoContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 `
 
 const Resultado = styled.div`
@@ -25,59 +24,61 @@ const Resultado = styled.div`
     cursor: pointer;
     text-align: center;
     padding: 0 100px;
-
     p {
         width: 200px;
         color: #FFF;
     }
-
     img {
         width: 100px;
     }
-
     &:hover {
         border: 1px solid white;
     }
 `
 
-const ResultadoContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+const Titulo = styled.h2`
+    color: #FFF;
+    font-size: 36px;
+    text-align: center;
+    width: 100%;
+    padding-top: 35px
 `
 
 function Favoritos() {
-    const [ favoritos, setFavoritos ] = useState([])
+  const [favoritos, setFavoritos] = useState([])
 
-    const fetchFavoritos = async() => {
-        const livrosFavoritos = await getFavoritos()
-        setFavoritos(livrosFavoritos)
-    }
-    
-    useEffect(() => {
-        fetchFavoritos()
-    }, [])
+  useEffect(() => {
+    fetchFavoritos()
+  }, [])
 
-    function handleClickResultado(id) {
-        deleteFavorito(id)
-        fetchFavoritos()
-        alert(`livro de id:${id} removido dos favoritos`)
-    }
-    
-    return (
-        <FavoritosContainer>
-            <Titulo>Aqui estão seus livros favoritos:</Titulo>
-            <ResultadoContainer>
-                { favoritos.length ?
-                    favoritos.map( favorito => (
-                        <Resultado onClick={() => handleClickResultado(favorito.id)}>
-                            <img src={livroImg}/>
-                            <p>{favorito.nome}</p>
-                        </Resultado> )) : null
-                }
-            </ResultadoContainer>
-        </FavoritosContainer>
-    );
+  async function fetchFavoritos() {
+    const response = await getFavoritos()
+    setFavoritos(response)
+  }
+
+  async function deletaFavorito(id) {
+    await deleteFavorito(id)
+    await fetchFavoritos()
+    alert(`Você deletou o livro de id: ${id}`)
+  }
+
+  return (
+    <AppContainer>
+      <div>
+        <Titulo>Aqui estão seus livros favoritos:</Titulo>
+        <ResultadoContainer>
+          {
+            favoritos.length !== 0 ? favoritos.map(favorito => (
+              <Resultado onClick={() => deletaFavorito(favorito.id)}>
+                <p>{favorito.nome}</p>
+                <img src={livroImg}/>
+              </Resultado>
+            )) : null
+          }
+        </ResultadoContainer>
+      </div>
+    </AppContainer>
+  );
 }
 
 export default Favoritos
